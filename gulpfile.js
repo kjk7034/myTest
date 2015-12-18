@@ -18,7 +18,7 @@ var paths = {
 // 웹서버를 localhost:8000 로 실행한다.
 gulp.task('server', function () {
     return gulp.src(dist + '/')
-        .pipe(webserver());
+        .pipe(webserver())
 });
 
 // 자바스크립트 파일을 하나로 합치고 압축한다.
@@ -26,21 +26,24 @@ gulp.task('combine-js', function () {
     return gulp.src(paths.js)
         .pipe(concat('script.js'))
         .pipe(uglify())
-        .pipe(gulp.dest(dist + '/js'));
+        .pipe(gulp.dest(dist + '/js'))
+        .pipe(livereload());
 });
 
 // sass 파일을 css 로 컴파일한다.
 gulp.task('compile-sass', function () {
     return gulp.src(paths.scss)
         .pipe(sass())
-        .pipe(gulp.dest(dist + '/css'));
+        .pipe(gulp.dest(dist + '/css'))
+        .pipe(livereload());
 });
 
 // HTML 파일을 압축한다.
 gulp.task('compress-html', function () {
     return gulp.src(paths.html)
         .pipe(minifyhtml())
-        .pipe(gulp.dest(dist + '/'));
+        .pipe(gulp.dest(dist + '/'))
+        .pipe(livereload());
 });
 
 // 파일 변경 감지 및 브라우저 재시작
@@ -49,7 +52,7 @@ gulp.task('watch', function () {
     gulp.watch(paths.js, ['combine-js']);
     gulp.watch(paths.scss, ['compile-sass']);
     gulp.watch(paths.html, ['compress-html']);
-    gulp.watch(dist + '/**').on('change', livereload.changed);
+    // gulp.watch(dist + '/**').on('change', livereload.changed);
 });
 
 //기본 task 설정
