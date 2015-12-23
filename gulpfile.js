@@ -1,3 +1,4 @@
+var jshint = require('gulp-jshint');
 var gulp = require('gulp');
 var webserver = require('gulp-webserver');
 var concat = require('gulp-concat');
@@ -5,19 +6,21 @@ var uglify = require('gulp-uglify');
 var minifyhtml = require('gulp-minify-html');
 var sass = require('gulp-sass');
 var livereload = require('gulp-livereload');
-
+var open = require('gulp-open');
 var src = 'public/src';
 var dist = 'public/dist';
 
 var paths = {
-    js: src + '/js/*.js',
+    js: src + '/js/**/*.js',
     scss: src + '/scss/*.scss',
     html: src + '/**/*.html'
 };
 
+
+
 // 웹서버를 localhost:8000 로 실행한다.
 gulp.task('server', function () {
-    return gulp.src(dist + '/')
+    return gulp.src('public/')
         .pipe(webserver())
 });
 
@@ -28,6 +31,13 @@ gulp.task('combine-js', function () {
         .pipe(uglify())
         .pipe(gulp.dest(dist + '/js'))
         .pipe(livereload());
+});
+
+gulp.task('vendors', function() {
+    return gulp.src('public/vendor/*.js')
+        .pipe(concat('vendors.js'))
+        .pipe(uglify())
+        .pipe(gulp.dest(dist + '/js'));
 });
 
 // sass 파일을 css 로 컴파일한다.
@@ -46,6 +56,7 @@ gulp.task('compress-html', function () {
         .pipe(livereload());
 });
 
+
 // 파일 변경 감지 및 브라우저 재시작
 gulp.task('watch', function () {
     livereload.listen();
@@ -55,8 +66,25 @@ gulp.task('watch', function () {
     // gulp.watch(dist + '/**').on('change', livereload.changed);
 });
 
+
+
+gulp.task('lint', function() {
+    return gulp.src(paths.js)
+        .pipe(jshint())
+        .pipe(jshint.reporter('default'))
+});
+
+gulp.task('open', function(){
+    var options = {
+        uri: 'http://localhost:63342/mytest/public/dist/index.html',
+        app: 'chrome'
+    };
+    gulp.src(__filename)
+        .pipe(open(options));
+});
+
 //기본 task 설정
 gulp.task('default', [
-    'server', 'combine-js',
-    'compile-sass', 'compress-html',
+    'lint', 'server', 'vendors', 'combine-js',
+    'compile-sass', 'compress-html', 'open',
     'watch' ]);

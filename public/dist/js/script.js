@@ -1,1 +1,1 @@
-console.log("Test"),console.log("Test"),console.log("Test"),console.log("Test");
+console.log("Test");var jqDeferred=$.ajax("../lib/js/sample.json"),jqDeferred2=$.ajax("../lib/js/sample2.json"),data1,data2,result2="";Promise.all([jqDeferred,jqDeferred2]).then(function(e){data1=e[0].glossary11.title1,data2=e[1].topping;for(var a=0,t=data2.length;t>a;a++)result2+=data2[a].type+" , ";console.log("Test In Promise"),$("#result1").html(data1),$("#result2").html(result2)});
